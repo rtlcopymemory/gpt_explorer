@@ -4,10 +4,10 @@ use std::fs;
 mod args;
 mod gpt;
 
-use args::arg_parse::get_path;
-use gpt::gpt::get_gpt_header;
-use gpt::gpt::get_partition_table;
-use gpt::gpt::verify_mbr;
+use args::get_path;
+use gpt::get_gpt_header;
+use gpt::get_partition_table;
+use gpt::verify_mbr;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<String> = env::args().collect();
