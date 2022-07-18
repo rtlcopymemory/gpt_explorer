@@ -48,10 +48,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<String> = env::args().collect();
     let path: String;
 
-    if let Some(p) = get_path(args) {
+    if let Some(p) = get_path(&args) {
         path = p;
     } else {
-        panic!("Please provide a path to a raw image");
+        println!("\tUsage: {} <path_raw_image>", args[0]);
+        return Ok(());
     }
 
     let buff = fs::read(path)?;
