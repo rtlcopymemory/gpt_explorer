@@ -57,7 +57,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let buff = fs::read(path)?;
 
-    println!("MBR: {:?}", verify_mbr(&buff));
+    verify_mbr(&buff).expect("MBR not correct");
+
+    //println!("MBR: {:?}", verify_mbr(&buff));
 
     let header = get_gpt_header(&buff).expect("Messed up GPT header");
     //println!("GPT Sign: {:?}", header);
@@ -65,7 +67,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let table = get_partition_table(&buff, header);
     //println!("\nPartition Table: {:?}", &table);
 
-    println!("");
+    //println!("");
 
     for partition in table.partitions {
         println!("Type GUID: \t{}", bytes_to_guid(&*partition.type_guid));
