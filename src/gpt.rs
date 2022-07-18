@@ -179,9 +179,6 @@ fn bytes_to_guid(arr: &[u8]) -> String {
             .collect::<String>(),
     ];
 
-    let mut res = parts.iter().fold(String::from(""), |acc, x| acc + "-" + x);
-
-    res.remove(0);
-
-    res
+    itertools::intersperse(parts.iter().cloned(), &String::from("-"))
+        .fold(String::from(""), |acc, x| acc + x)
 }

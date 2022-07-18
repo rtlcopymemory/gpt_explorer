@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 bytes = "0.4.12"
+itertools = "0.10.3"
