@@ -1,4 +1,6 @@
 pub mod gpt {
+    use std::fmt::Display;
+
     use bytes::{ByteOrder, LittleEndian};
 
     extern crate bytes;
@@ -42,6 +44,22 @@ pub mod gpt {
         pub end_lba: u64,
         pub attributes: u64,
         pub name: String,
+    }
+
+    impl Display for Partition {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            writeln!(f, "Type GUID: \t{}", bytes_to_guid(&*self.type_guid))?;
+            writeln!(f, "GUID: \t\t{}", bytes_to_guid(&*self.guid))?;
+            writeln!(f, "Name: \t\t{}", self.name)?;
+            writeln!(f, "Start LBA: \t{}", self.start_lba)?;
+            writeln!(f, "End LBA: \t{}", self.end_lba)?;
+            writeln!(
+                f,
+                "Size (MB): \t{}",
+                (self.end_lba - self.start_lba) * 512 / 1024 / 1024
+            )?;
+            writeln!(f, "Attributes: \t{}", self.attributes)
+        }
     }
 
     #[derive(Debug)]
@@ -133,5 +151,40 @@ pub mod gpt {
                 .filter(|e| *e.type_guid != [0; 16])
                 .collect(),
         }
+    }
+
+    fn bytes_to_guid(arr: &[u8]) -> String {
+        if arr.len() < 16 {
+            panic!("GUID length was {} instead of 16", arr.len());
+        }
+
+        let parts = [
+            &arr[0x0..0x4]
+                .iter()
+                .map(|c| format!("{:02X}", c))
+                .collect::<String>(),
+            &arr[0x4..0x6]
+                .iter()
+                .map(|c| format!("{:02X}", c))
+                .collect::<String>(),
+            &arr[0x6..0x8]
+                .iter()
+                .map(|c| format!("{:02X}", c))
+                .collect::<String>(),
+            &arr[0x8..0xa]
+                .iter()
+                .map(|c| format!("{:02X}", c))
+                .collect::<String>(),
+            &arr[0xa..]
+                .iter()
+                .map(|c| format!("{:02X}", c))
+                .collect::<String>(),
+        ];
+
+        let mut res = parts.iter().fold(String::from(""), |acc, x| acc + "-" + x);
+
+        res.remove(0);
+
+        res
     }
 }
